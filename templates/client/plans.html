@@ -1,0 +1,20 @@
+{% extends 'client/base.html' %}
+
+{% block content %}
+<div class="container mx-auto p-5">
+    <h1 class="text-3xl font-bold mb-4">Available Plans</h1>
+    <div class="flex flex-wrap -mx-4">
+        {% for plan in plans %}
+        <div class="w-full md:w-1/3 px-4 mb-4">
+            <div class="bg-white shadow-md rounded-lg p-6">
+                <h2 class="text-xl font-semibold mb-4">{{ plan.name }}</h2>
+                <p>{{ plan.description }}</p>
+                <p class="text-lg font-bold">Price: ${{ plan.price }}</p>
+                <p class="text-lg font-bold">Duration: {{ plan.duration_days }} days</p>
+                <a href="{% url 'subscribe' plan.id %}" class="bg-blue-500 text-white px-3 py-1 rounded-md hover:bg-blue-600">Subscribe</a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

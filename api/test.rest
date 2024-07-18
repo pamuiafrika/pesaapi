@@ -1,0 +1,15 @@
+### Test quote_currency with valid API key
+GET http://localhost:8000/api/quote/?apikey=cbe828ab-e9bb-4713-bff7-be9c4f7c330c&base=USD&target=TZS HTTP/1.1
+Content-Type: application/json
+
+### Test quote_currency with missing API key
+GET http://localhost:8000/api/convert/?apikey=d8491a69-cf33-4bd5-80c4-58006a595c12&base=USD&target=TZS&amount=299 HTTP/1.1
+Content-Type: application/json
+
+### Test quote_currency with invalid API key
+GET http://localhost:8000/quote_currency?apikey=invalid_api_key&base=USD&target=EUR HTTP/1.1
+Content-Type: application/json
+
+### Test quote_currency with invalid base and target
+GET http://localhost:8000/quote_currency?apikey=valid_api_key&base=INVALID&target=INVALID HTTP/1.1
+Content-Type: application/json

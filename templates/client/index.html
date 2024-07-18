@@ -1,0 +1,153 @@
+{% extends 'client/base.html'%} {% block title %} Dashboard {% endblock %} {%
+{% block content %}
+<section class="bg-white rounded-lg shadow-md p-6 mb-6">
+  <h2 class="text-2xl font-bold mb-4">Welcome, {{ username.name }}!</h2>
+  <p>Here's your API Key <span class="text-blue-700" id="apiKey">{{ username.api_key }}</span> <button title="copy" id="copyApiKeyBtn" class="text-black px-3 py-1 rounded-md hover:text-blue-600">
+    <span class="bx bx-copy"></span>
+</button></p>
+
+  <!-- Copy API Key Button -->
+
+</section>
+
+<section>
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-5">
+    <!-- Card 1 -->
+    <div class="bg-white overflow-hidden shadow-sm rounded-lg">
+      <div class="p-4">
+        <h2 class="text-lg font-semibold text-gray-800">API Usage</h2>
+        <p class="text-sm text-gray-500 mt-1">25/100 Calls</p>
+      </div>
+      <div class="border-t border-gray-200 px-4 py-3">
+        <a
+          href="#"
+          class="text-sm font-medium text-indigo-600 hover:text-indigo-500"
+          >View full activity</a
+        >
+      </div>
+    </div>
+
+    <!-- Card 2 -->
+    <div class="bg-white overflow-hidden shadow-sm rounded-lg">
+      <div class="p-4">
+        <h2 class="text-lg font-semibold text-gray-800">Your Plan</h2>
+        <p class="text-sm text-gray-500 mt-1">Free Plan</p>
+      </div>
+      <div class="border-t border-gray-200 px-4 py-3">
+        <a
+          href="{% url 'plans' %}"
+          class="text-sm font-medium text-indigo-600 hover:text-indigo-500"
+          >Upgrade Plan</a
+        >
+      </div>
+    </div>
+
+    <!-- Card 3 -->
+    <div class="bg-white overflow-hidden shadow-sm rounded-lg">
+      <div class="p-4">
+        <h2 class="text-lg font-semibold text-gray-800">Settings</h2>
+        <p class="text-sm text-gray-500 mt-1">Manage your account settings.</p>
+      </div>
+      <div class="border-t border-gray-200 px-4 py-3">
+        <a
+          href="{% url 'settings' %}"
+          class="text-sm font-medium text-indigo-600 hover:text-indigo-500"
+          >Manage settings</a
+        >
+      </div>
+    </div>
+  </div>
+</section>
+<section class="bg-white rounded-lg shadow-md p-6 mb-8">
+  <h2 class="text-2xl font-bold mb-4">Recent API Calls</h2>
+  <div class="overflow-x-auto">
+    <table class="min-w-full divide-y divide-gray-200">
+      {% if api_requests %}
+      <thead class="bg-gray-50">
+        <tr>
+          <th
+            class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+          >
+            Timestamp
+          </th>
+          <th
+            class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+          >
+            Base Currency
+          </th>
+          <th
+            class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+          >
+            To Currency
+          </th>
+          <th
+            class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+          >
+            Status
+          </th>
+          <th
+            class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+          >
+            Rate
+          </th>
+        </tr>
+      </thead>
+      <tbody class="bg-white divide-y divide-gray-200">
+        {% for request in api_requests %}
+        <tr>
+            <td class="px-6 py-4 whitespace-nowrap">
+              <div class="text-sm text-gray-900">{{ request.created_at }}</div>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap">
+              <div class="text-sm text-gray-900">{{ request.from_currency }}</div>
+            </td>
+  
+            <td class="px-6 py-4 whitespace-nowrap">
+                <div class="text-sm text-gray-900">{{ request.to_currency }}</div>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap">
+              <div class="text-sm text-green-500">success</div>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap">
+              <div class="text-sm text-gray-900">{{ request.rate }}</div>
+            </td>
+          </tr>
+        {% endfor %}
+        <!-- Add more transaction rows as needed -->
+      </tbody>
+      {% else %}
+      <tr>
+        <td class="text-center text-gray-600" colspan="4">No Data Yet!</td>
+      </tr>
+
+      {% endif %}
+    </table>
+  </div>
+</section>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    // Function to copy API Key to clipboard
+    document.getElementById('copyApiKeyBtn').addEventListener('click', function () {
+        var apiKey = document.getElementById('apiKey').innerText.trim();
+        
+        // Create a temporary textarea element to copy the text
+        var textarea = document.createElement('textarea');
+        textarea.value = apiKey;
+        document.body.appendChild(textarea);
+        textarea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textarea);
+        
+        // Show SweetAlert for successful copy
+        Swal.fire({
+            icon: 'success',
+            title: 'Copied!',
+            text: 'Your API Key has been copied to clipboard.',
+            timer: 3000,
+            showConfirmButton: false
+        });
+    });
+</script>
+
+{% endblock %}

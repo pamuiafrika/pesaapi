@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Internet Test</title>
+    <!-- Include Tailwind CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <!-- Space Grotesk font -->
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+    <!-- Include SweetAlert2 CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.1.7/dist/sweetalert2.min.css">
+    <style>
+        body {
+            font-family: 'Space Grotesk', sans-serif;
+        }
+    </style>
+</head>
+
+<body class="bg-white text-gray-900">
+    <div class="container mx-auto p-4">
+        <h1 class="text-3xl font-bold mb-4">Internet Test</h1>
+
+        <!-- Theme switcher -->
+        <div class="mb-4">
+            <button id="toggleTheme"
+                class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded">
+                Toggle Theme
+            </button>
+        </div>
+
+        <!-- Internet Availability Test -->
+        <div id="internetAvailability" class="mb-8">
+            <button onclick="checkInternetAvailability()"
+                class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mb-2">
+                Check Internet Availability
+            </button>
+        </div>
+
+        <!-- Internet Speed Test -->
+        <div id="speedTest" class="mb-8">
+            <button onclick="testSpeed()"
+                class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mb-2">
+                Start Speed Test
+            </button>
+            <div id="speedTestProgress" class="hidden">
+                <p>Testing speed...</p>
+                <div id="downloadProgress" class="w-full bg-gray-300 mt-2 rounded-lg overflow-hidden">
+                    <div id="downloadBar" class="bg-blue-500 h-4"></div>
+                    <svg id="downloadSpeedometer" class="w-full mt-2" viewBox="0 0 100 50" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="50" cy="50" r="45" fill="none" stroke="#ccc" stroke-width="4" />
+                        <circle id="downloadSpeedometerValue" cx="50" cy="50" r="45" fill="none" stroke="#3b82f6" stroke-width="4" stroke-dasharray="0, 283" />
+                    </svg>
+                </div>
+                <p>Uploading...</p>
+                <div id="uploadProgress" class="w-full bg-gray-300 mt-2 rounded-lg overflow-hidden">
+                    <div id="uploadBar" class="bg-green-500 h-4"></div>
+                    <svg id="uploadSpeedometer" class="w-full mt-2" viewBox="0 0 100 50" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="50" cy="50" r="45" fill="none" stroke="#ccc" stroke-width="4" />
+                        <circle id="uploadSpeedometerValue" cx="50" cy="50" r="45" fill="none" stroke="#10b981" stroke-width="4" stroke-dasharray="0, 283" />
+                    </svg>
+                </div>
+            </div>
+            <div id="speedTestResults" class="hidden">
+                <p id="downloadSpeedDisplay" class="mt-2">Download Speed: <span id="downloadSpeed">0</span> Mbps</p>
+                <p id="uploadSpeedDisplay">Upload Speed: <span id="uploadSpeed">0</span> Mbps</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Include SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.1.7/dist/sweetalert2.all.min.js"></script>
+
+    <!-- JavaScript for functionality -->
+    <script>
+        // Function to show success toast
+        function showSuccessToast(message) {
+            Swal.fire({
+                icon: 'success',
+                title: 'Success!',
+                text: message,
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 3000,
+                timerProgressBar: true,
+            });
+        }
+
+        // Function to show error toast
+        function showErrorToast(message) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error!',
+                text: message,
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 3000,
+                timerProgressBar: true,
+            });
+        }
+
+        // Function to check internet availability
+        function checkInternetAvailability() {
+            fetch('https://api.ipify.org/?format=json')
+                .then(response => response.json())
+                .then(data => {
+                    showSuccessToast('Internet is available!');
+                })
+                .catch(error => {
+                    showErrorToast('Internet is not available.');
+                });
+        }
+
+        // Function to start speed test
+        async function testSpeed() {
+            document.getElementById('speedTestProgress').classList.remove('hidden');
+            document.getElementById('speedTestResults').classList.add('hidden');
+
+            try {
+                const speedTestURL = 'https://www.speedtest.net/api/js/speedtest-embed.js';
+                const script = document.createElement('script');
+                script.src = speedTestURL;
+                script.onload = () => {
+                    const speedtest = new window.Speedtest();
+                    speedtest.onupdate = (data) => {
+                        if (data.download && data.upload) {
+                            updateSpeedometer('downloadSpeedometerValue', data.download / 10); // Adjust scale for better visualization
+                            updateSpeedometer('uploadSpeedometerValue', data.upload / 10); // Adjust scale for better visualization
+                            document.getElementById('downloadSpeed').textContent = data.download;
+                            document.getElementById('uploadSpeed').textContent = data.upload;
+                            document.getElementById('speedTestProgress').classList.add('hidden');
+                            document.getElementById('speedTestResults').classList.remove('hidden');
+                        }
+                    };
+                    speedtest.start();
+                };
+                document.body.appendChild(script);
+            } catch (error) {
+                showErrorToast('Speed test failed.');
+                document.getElementById('speedTestProgress').classList.add('hidden');
+                document.getElementById('speedTestResults').classList.add('hidden');
+            }
+        }
+
+        // Function to update speedometer SVG
+        function updateSpeedometer(id, value) {
+            const circle = document.getElementById(id);
+            const circumference = circle.getTotalLength();
+            const offset = circumference * (1 - value / 100);
+            circle.style.strokeDasharray = `${value}, ${circumference}`;
+            circle.style.strokeDashoffset = offset;
+        }
+
+        // Dark/light theme switcher
+        const toggleThemeButton = document.getElementById('toggleTheme');
+        let darkMode = false;
+
+        toggleThemeButton.addEventListener('click', () => {
+            darkMode = !darkMode;
+            const body = document.body;
+            if (darkMode) {
+                body.classList.remove('bg-white', 'text-gray-900');
+                body.classList.add('bg-gray-800', 'text-white');
+                toggleThemeButton.classList.remove('bg-gray-300', 'hover:bg-gray-400', 'text-gray-800');
+                toggleThemeButton.classList.add('bg-gray-600', 'hover:bg-gray-700', 'text-white');
+            } else {
+                body.classList.remove('bg-gray-800', 'text-white');
+                body.classList.add('bg-white', 'text-gray-900');
+                toggleThemeButton.classList.remove('bg-gray-600', 'hover:bg-gray-700', 'text-white');
+                toggleThemeButton.classList.add('bg-gray-300', 'hover:bg-gray-400', 'text-gray-800');
+            }
+        });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,46 @@
+{% extends 'client/base.html' %}
+
+
+{% block title %} My Subscriptions - Pesa API {% endblock %}
+
+{% block content %}
+<div class="container mx-auto p-5">
+    <h1 class="text-3xl font-bold mb-4">My Subscriptions</h1>
+    <div class="overflow-x-auto">
+        <table class="min-w-full bg-white shadow-md rounded-lg">
+            <thead>
+                <tr>
+                    <th class="py-2 px-4 bg-gray-700 text-white text-left border-b">Plan Name</th>
+                    <th class="py-2 px-4 bg-gray-700 text-white text-left border-b">Subscription Date</th>
+                    <th class="py-2 px-4 bg-gray-700 text-white text-left border-b">End Date</th>
+                    <th class="py-2 px-4 bg-gray-700 text-white text-left border-b">Status</th>
+                    <th class="py-2 px-4 bg-gray-700 text-white text-left border-b">Days Remaining</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for subscription in subscriptions %}
+                <tr>
+                    <td class="py-2 px-4 border-b">{{ subscription.plan.name }}</td>
+                    <td class="py-2 px-4 border-b">{{ subscription.start_date }}</td>
+                    <td class="py-2 px-4 border-b">{{ subscription.end_date }}</td>
+                    <td class="py-2 px-4 border-b">
+                        {% if subscription.is_active %}
+                        <span class="text-green-600 font-semibold">Active</span>
+                        {% else %}
+                        <span class="text-red-600 font-semibold">Expired</span>
+                        {% endif %}
+                    </td>
+                    <td class="py-2 px-4 border-b">
+                        {% if subscription.is_active %}
+                        {{ subscription.days_remaining }} days
+                        {% else %}
+                        N/A
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

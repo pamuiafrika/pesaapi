@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PesaAPI - Currency Converter</title>
+    {% load static %}
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+    <link
+      href="https://unpkg.com/boxicons@2.1.1/css/boxicons.min.css"
+      rel="stylesheet"
+    />
+    <link href="{% static 'css/animate.min.css' %}" rel="stylesheet">
+    <link href="{% static 'css/tailwind.min.css' %}" rel="stylesheet">
+
+    <script src="{% static 'js/alphinejs.min.js' %}" defer></script>
+    <style>
+      body {
+        font-family: "Space Grotesk", sans-serif;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      a {
+        text-decoration: none;
+      }
+
+      #apiTestModal {
+        z-index: 9999;
+        /* Higher z-index to make sure it appears on top */
+      }
+
+      /* Responsive layout adjustments */
+      @media (min-width: 768px) {
+        .modal-container {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          height: 100vh;
+        }
+
+        .modal-content {
+          width: 50%;
+        }
+      }
+    </style>
+  </head>
+
+  <body class="bg-gray-900 text-white">
+    <!-- Responsive Navbar -->
+    <nav class="bg-gray-800" x-data="{ open: false }">
+      <div class="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
+        <div class="relative flex h-16 items-center justify-between">
+          <div class="absolute inset-y-0 left-0 flex items-center sm:hidden">
+            <!-- Mobile menu button-->
+            <button
+              @click="open = !open"
+              type="button"
+              class="relative inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-gray-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white"
+              aria-controls="mobile-menu"
+              aria-expanded="false"
+            >
+              <span class="absolute -inset-0.5"></span>
+              <span class="sr-only">Open main menu</span>
+              <svg
+                x-show="!open"
+                class="block h-6 w-6"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke-width="1.5"
+                stroke="currentColor"
+                aria-hidden="true"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"
+                />
+              </svg>
+              <svg
+                x-show="open"
+                class="hidden h-6 w-6"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke-width="1.5"
+                stroke="currentColor"
+                aria-hidden="true"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M6 18L18 6M6 6l12 12"
+                />
+              </svg>
+            </button>
+          </div>
+          <div
+            class="flex flex-1 items-center justify-center sm:items-stretch sm:justify-start"
+          >
+            <div class="flex flex-shrink-0 items-center">
+              <img
+                class="h-8 w-auto"
+                src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=500"
+                alt="Logo"
+              />
+            </div>
+
+            <div class="hidden sm:ml-6 sm:block">
+              <div class="flex space-x-4">
+                <a
+                  href="#home"
+                  class="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-gray-700 hover:text-white"
+                  >Home</a
+                >
+                <a
+                  href="#features"
+                  class="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-gray-700 hover:text-white"
+                  >Features</a
+                >
+                <a
+                  href="#pricing"
+                  class="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-gray-700 hover:text-white"
+                  >Pricing</a
+                >
+                <a
+                  href="#about"
+                  class="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-gray-700 hover:text-white"
+                  >About</a
+                >
+                <a
+                  href="#contact"
+                  class="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-gray-700 hover:text-white"
+                  >Contact</a
+                >
+              </div>
+            </div>
+          </div>
+          {% if user.is_authenticated %}
+          <div class="flex justify-end p-4">
+            <a
+              href="{% url 'logout' %}"
+              class="flex items-center text-gray-200 hover:text-gray-400"
+            >
+              <i class="bx bx-log-out text-2xl"></i>
+              <span class="ml-2">Logout</span>
+            </a>
+          </div>
+
+          {% else %}
+
+          <div
+            class="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0"
+          >
+            <a
+              href="{% url 'login' %}"
+              class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded animate__animated animate__fadeIn"
+              >GET STARTED</a
+            >
+          </div>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- Mobile menu, show/hide based on menu state. -->
+      <div class="sm:hidden" id="mobile-menu" x-show="open">
+        <div class="space-y-1 px-2 pb-3 pt-2">
+          <a
+            href="#home"
+            class="block rounded-md bg-gray-900 px-3 py-2 text-base font-medium text-white"
+            aria-current="page"
+            >Home</a
+          >
+          <a
+            href="#about"
+            class="block rounded-md px-3 py-2 text-base font-medium text-gray-300 hover:bg-gray-700 hover:text-white"
+            >About</a
+          >
+          <a
+            href="#features"
+            class="block rounded-md px-3 py-2 text-base font-medium text-gray-300 hover:bg-gray-700 hover:text-white"
+            >Features</a
+          >
+          <a
+            href="#pricing"
+            class="block rounded-md px-3 py-2 text-base font-medium text-gray-300 hover:bg-gray-700 hover:text-white"
+            >Pricing</a
+          >
+          <a
+            href="#contact"
+            class="block rounded-md px-3 py-2 text-base font-medium text-gray-300 hover:bg-gray-700 hover:text-white"
+            >Contact</a
+          >
+        </div>
+      </div>
+    </nav>
+
+    <main class="container mx-auto p-4">
+      <section id="home" class="text-center my-8">
+        <h2 class="text-4xl font-bold mb-5 animate__animated animate__fadeIn">
+          Real-Time, Intraday & Historical Market Data API
+        </h2>
+        <p class="text-lg mb-4 animate__animated animate__fadeIn small">
+          Free, easy-to-use API delivering real-time, accurate and reliable
+          exchange rate data for multiple currencies around the world.
+        </p>
+        <a
+          href="#"
+          class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded animate__animated animate__fadeIn"
+          >GET API KEY</a
+        >
+      </section>
+
+      <section id="features" class="my-8">
+        <!-- <h3 class="text-2xl font-bold mb-4">Features</h3> -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div
+            class="bg-gray-800 p-4 rounded shadow-md animate__animated animate__fadeIn"
+          >
+            <i class="bx bx-stats text-4xl mb-2"></i>
+            <h4 class="text-xl font-bold mb-2">Accurate Rates</h4>
+            <p>Get the most accurate and up-to-date exchange rates.</p>
+          </div>
+          <div
+            class="bg-gray-800 p-4 rounded shadow-md animate__animated animate__fadeIn"
+          >
+            <i class="bx bx-code-alt text-4xl mb-2"></i>
+            <h4 class="text-xl font-bold mb-2">Easy Integration</h4>
+            <p>Seamlessly integrate our API into your applications.</p>
+          </div>
+          <div
+            class="bg-gray-800 p-4 rounded shadow-md animate__animated animate__fadeIn"
+          >
+            <i class="bx bx-globe text-4xl mb-2"></i>
+            <h4 class="text-xl font-bold mb-2">Global Support</h4>
+            <p>Supports multiple currencies from around the world.</p>
+          </div>
+          <div
+            class="bg-gray-800 p-4 rounded shadow-md animate__animated animate__fadeIn"
+          >
+            <i class="bx bx-lock text-4xl mb-2"></i>
+            <h4 class="text-xl font-bold mb-2">Secure</h4>
+            <p>High level security to ensure your transactions are safe.</p>
+          </div>
+          <div
+            class="bg-gray-800 p-4 rounded shadow-md animate__animated animate__fadeIn"
+          >
+            <i class="bx bx-time text-4xl mb-2"></i>
+            <h4 class="text-xl font-bold mb-2">Real-Time Updates</h4>
+            <p>Get real-time updates on currency rates and transactions.</p>
+          </div>
+          <div
+            class="bg-gray-800 p-4 rounded shadow-md animate__animated animate__fadeIn"
+          >
+            <i class="bx bx-support text-4xl mb-2"></i>
+            <h4 class="text-xl font-bold mb-2">24/7 Support</h4>
+            <p>Our support team is available 24/7 to assist you.</p>
+          </div>
+        </div>
+      </section>
+      <section id="pricing" class="my-8">
+        <h3 class="text-2xl font-bold my-8 text-center">Pricing Plans</h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div
+            class="bg-gray-800 p-4 rounded shadow-md animate__animated animate__fadeIn text-center"
+          >
+            <h4 class="text-xl font-bold mb-2">Free Plan</h4>
+            <p class="text-2xl font-bold mb-3">$0/month</p>
+            <ul class="text-left list-none list-inside mb-5">
+              <li><i class="bx bx-code-alt"></i> 100 API Calls</li>
+              <li><i class="bx bx-vector"></i> Basic API Access</li>
+              <li><i class="bx bx-data"></i> No Historical Data</li>
+              <li><i class="bx bx-support"></i> No Support</li>
+            </ul>
+            <a
+              href="#"
+              class="bg-blue-500 hover:bg-blue-700 mt-5 text-white font-bold py-2 px-4 rounded animate__animated animate__fadeIn text-center"
+              >Subscribe</a
+            >
+          </div>
+          <div
+            class="text-center bg-gray-800 p-4 rounded shadow-md animate__animated animate__fadeIn"
+          >
+            <h4 class="text-xl font-bold mb-2">Developers Plan</h4>
+            <p class="text-2xl font-bold mb-3">$2/month</p>
+            <ul class="text-left list-none list-inside mb-4">
+              <li><i class="bx bx-code-alt"></i> 1,000 API Calls</li>
+              <li><i class="bx bx-vector"></i> API Access with Sample Code</li>
+              <li><i class="bx bx-data"></i> Sample Historical Data</li>
+              <li><i class="bx bx-support"></i> Community support</li>
+            </ul>
+            <a
+              href="#"
+              class="bg-blue-500 hover:bg-blue-700 text-white mt-5 font-bold py-2 px-4 rounded animate__animated animate__fadeIn text-center"
+              >Subscribe</a
+            >
+          </div>
+
+          <div
+            class="text-center bg-gray-800 p-4 rounded shadow-md animate__animated animate__fadeIn"
+          >
+            <h4 class="text-xl font-bold mb-2">Pro Plan</h4>
+            <p class="text-2xl font-bold mb-3">$10/month</p>
+            <ul class="text-left list-none list-inside mb-4">
+              <li><i class="bx bx-code-alt"></i> 10,000 API Calls</li>
+              <li><i class="bx bx-vector"></i> Advanced API Access</li>
+              <li><i class="bx bx-data"></i> Historical Data</li>
+              <li><i class="bx bx-support"></i> Standard Support</li>
+            </ul>
+            <a
+              href="#"
+              class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded animate__animated animate__fadeIn text-center"
+              >Subscribe</a
+            >
+          </div>
+          <div
+            class="text-center bg-gray-800 p-4 rounded shadow-md animate__animated animate__fadeIn"
+          >
+            <h4 class="text-xl font-bold mb-2">Enterprise Plan</h4>
+            <p class="text-2xl font-bold mb-3">$19/month</p>
+            <ul class="text-left list-none list-inside mb-4">
+              <li><i class="bx bx-code-alt"></i> Unlimited API Calls</li>
+              <li><i class="bx bx-vector"></i> Advanced API Access</li>
+              <li><i class="bx bx-data"></i> Historical Data</li>
+              <li><i class="bx bx-support"></i> Standard Support</li>
+              <li><i class="bx bx-dollar"></i> All Base Currencies</li>
+            </ul>
+            <a
+              href="#"
+              class="bg-blue-500 hover:bg-blue-700 text-white mt-5 font-bold py-2 px-4 rounded animate__animated animate__fadeIn text-center"
+              >Subscribe</a
+            >
+          </div>
+        </div>
+      </section>
+      <section id="about" class="my-8">
+        <h3 class="text-2xl font-bold mb-5">About PesaAPI</h3>
+        <p class="animate__animated animate__fadeIn mb-5">
+          PesaAPI is a powerful and easy-to-use currency converter API designed
+          to provide accurate and real-time exchange rates. Whether you are a
+          developer looking to integrate currency conversion into your
+          application or a business in need of up-to-date financial data,
+          PesaAPI has got you covered. With our reliable service, secure
+          transactions, and extensive global support, managing currency
+          conversions has never been easier.
+        </p>
+
+        <a
+          href="#"
+          class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 my-5 rounded animate__animated animate__fadeIn"
+          >GET FREE API KEY</a
+        >
+      </section>
+      <section id="contact" class="my-8">
+        <h3 class="text-2xl font-bold mb-5 text-center">Contact Us</h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4">
+          <div class="bg-gray-800 p-4 rounded shadow-md">
+            <h3 class="text-2xl font-bold mb-4">Message Us</h3>
+            <form
+              class="bg-gray-800 p-4 rounded shadow-md animate__animated animate__fadeIn"
+            >
+            {% csrf_token %}
+              <div class="mb-4">
+                <label for="name" class="block text-sm font-bold mb-2"
+                  >Name</label
+                >
+                <input
+                  type="text"
+                  id="name"
+                  class="w-full p-2 rounded bg-gray-700 border border-gray-600 text-white"
+                  placeholder="Enter your name"
+                />
+              </div>
+              <div class="mb-4">
+                <label for="email" class="block text-sm font-bold mb-2"
+                  >Email</label
+                >
+                <input
+                  type="email"
+                  id="email"
+                  class="w-full p-2 rounded bg-gray-700 border border-gray-600 text-white"
+                  placeholder="Enter your email"
+                />
+              </div>
+              <div class="mb-4">
+                <label for="message" class="block text-sm font-bold mb-2"
+                  >Message</label
+                >
+                <textarea
+                  id="message"
+                  class="w-full p-2 rounded bg-gray-700 border border-gray-600 text-white"
+                  rows="4"
+                  placeholder="Enter your message"
+                ></textarea>
+              </div>
+              <button
+                type="submit"
+                class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+              >
+                Send
+              </button>
+            </form>
+          </div>
+          <div class="bg-gray-800 p-4 rounded shadow-md">
+            <h3 class="text-2xl font-bold mb-4">Our Address</h3>
+            <div
+              class="bg-gray-800 p-4 mb-5 rounded shadow-md animate__animated animate__fadeIn"
+            >
+              <i class="bx bx-building text-4xl mb-2"></i>
+              <h4 class="text-xl font-bold mb-2">PesaAPI HQ</h4>
+              <p>
+                Informatics Street, UDOM<br />
+                41101 Dodoma, Tanzania
+              </p>
+              <h4 class="mt-2"><strong>Open Hours</strong></h4>
+              <p>Monday-Friday: 08:00 AM - 07:00 PM</p>
+            </div>
+            <div
+              class="bg-gray-800 p-4 mb-5 rounded shadow-md animate__animated animate__fadeIn"
+            >
+              <i class="bx bx-support text-4xl mb-2"></i>
+              <h4 class="text-xl font-bold mb-2">Support</h4>
+              <p>
+                <strong>Call: </strong>+255 753 276 939 <br /><strong
+                  >Email: </strong
+                >support@pesa.api
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="flex flex-col md:flex-row items-start">
+          <div class="p-2 rounded shadow-md mb-4 md:mr-4 md:w-2/3"></div>
+          <div class="p-2 rounded shadow-md mb-4 md:mr-4 md:w-1/3"></div>
+        </div>
+      </section>
+    </main>
+    <footer class="bg-gray-800 p-4 text-left">
+      <div class="container mx-auto grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div>
+          <h4 class="text-lg font-bold mb-2">PesaAPI</h4>
+          <ul>
+            <li><a href="#about" class="hover:underline">About Us</a></li>
+            <li><a href="#contact" class="hover:underline">Contact</a></li>
+            <li><a href="#" class="hover:underline">Careers</a></li>
+            <li><a href="#" class="hover:underline">Press</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="text-lg font-bold mb-2">Resources</h4>
+          <ul>
+            <li><a href="#" class="hover:underline">Blog</a></li>
+            <li><a href="#" class="hover:underline">Help Center</a></li>
+            <li><a href="#" class="hover:underline">API Docs</a></li>
+            <li><a href="#" class="hover:underline">Status</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="text-lg font-bold mb-2">Legal</h4>
+          <ul>
+            <li><a href="#" class="hover:underline">Privacy Policy</a></li>
+            <li><a href="#" class="hover:underline">Terms of Service</a></li>
+            <li><a href="#" class="hover:underline">Cookie Policy</a></li>
+            <li><a href="#" class="hover:underline">Security</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="text-lg font-bold mb-2">Social</h4>
+          <div class="form mb-4">
+            <input
+              type="email"
+              placeholder="Enter your email"
+              class="w-full p-2 mb-2 bg-gray-700 text-white rounded"
+            />
+            <button
+              class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded w-full"
+            >
+              Subscribe
+            </button>
+          </div>
+          <ul class="flex space-x-4">
+            <li>
+              <a href="#" class="hover:underline"
+                ><i class="bx bxl-twitter text-2xl"></i
+              ></a>
+            </li>
+            <li>
+              <a href="#" class="hover:underline"
+                ><i class="bx bxl-linkedin text-2xl"></i
+              ></a>
+            </li>
+            <li>
+              <a href="#" class="hover:underline"
+                ><i class="bx bxl-github text-2xl"></i
+              ></a>
+            </li>
+            <li>
+              <a href="#" class="hover:underline"
+                ><i class="bx bxl-facebook text-2xl"></i
+              ></a>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <p class="mt-4 text-center">&copy; 2024 PesaAPI. All rights reserved.</p>
+    </footer>
+
+    <!-- AJAX Script -->
+ {% load static %}
+ <script src="{% static 'js/jquery.min.js' %}"></script>
+    <script>
+      $(document).ready(function () {
+        // Function to fetch exchange rate
+        
+        // Click event handler for the button
+        $("#fetchExchangeRateButton").on("click", function (event) {
+          event.preventDefault(); // Prevent default button click behavior
+
+          fetchExchangeRate(); // Call the function to fetch exchange rate
+
+          return false; // Ensure default behavior is prevented
+        });
+      });
+
+      // JavaScript for responsive navigation
+      const navToggle = document.getElementById("navToggle");
+      const navMenu = document.getElementById("navMenu");
+
+      navToggle.addEventListener("click", () => {
+        navMenu.classList.toggle("hidden");
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,47 @@
+{% extends 'client/base.html' %}
+
+{% block content %}
+<div class="container mx-auto p-5">
+    <h1 class="text-3xl font-bold mb-4">Support</h1>
+
+    <!-- Support Section -->
+    <section id="support" class="bg-white shadow-md rounded-lg p-6 mb-6">
+        <h2 class="text-2xl font-semibold mb-4">Support Information</h2>
+
+        <div class="mb-4">
+            <h3 class="text-lg font-semibold mb-2">Contact Us</h3>
+            <p>
+                For any inquiries, issues, or assistance related to the Pesa API, please contact our
+                support team through one of the following channels:
+            </p>
+            <ul class="list-disc pl-6">
+                <li>Email: support@pesa.api</li>
+                <li>Phone: +255 (753) 276-939</li>
+                <li>Live Chat: Available on our website during business hours (Mon-Fri, 9AM-5PM GMT)</li>
+            </ul>
+        </div>
+
+        <div class="mb-4">
+            <h3 class="text-lg font-semibold mb-2">Documentation</h3>
+            <p>
+                Refer to our <a href="{% url 'docs' %}" class="text-blue-500 hover:underline">API Documentation</a> for detailed guides, examples, and usage notes.
+            </p>
+        </div>
+
+        <div class="mb-4">
+            <h3 class="text-lg font-semibold mb-2">Community Forums</h3>
+            <p>
+                Engage with other developers, share tips, and ask questions on our community forums:
+                <a href="#" class="text-blue-500 hover:underline">Community Forums</a>.
+            </p>
+        </div>
+
+        <div class="mb-4">
+            <h3 class="text-lg font-semibold mb-2">FAQs</h3>
+            <p>
+                Visit our <a href="#" class="text-blue-500 hover:underline">FAQs page</a> for answers to commonly asked questions.
+            </p>
+        </div>
+    </section>
+</div>
+{% endblock %}

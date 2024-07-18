@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Subscription Status</title>
+    <!-- Link to Space Grotesk font from Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        /* Tailwind CSS classes */
+        body {
+            font-family: 'Space Grotesk', sans-serif; /* Use Space Grotesk font */
+            line-height: 1.6;
+            background-color: #f3f4f6;
+            padding: 20px;
+        }
+
+        h2 {
+            font-size: 1.5rem;
+            color: #111827;
+            margin-bottom: 10px;
+        }
+
+        p {
+            font-size: 1rem;
+            color: #4b5563;
+            margin-bottom: 15px;
+        }
+
+        .text-green-600 {
+            color: #10b981;
+        }
+
+        .text-red-600 {
+            color: #ef4444;
+        }
+
+        .font-semibold {
+            font-weight: 600;
+        }
+
+        .bg-white {
+            background-color: #ffffff;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+        }
+
+        /* Footer styles */
+        .footer {
+            margin-top: 30px;
+            padding-top: 15px;
+            border-top: 1px solid #e5e7eb;
+            text-align: center;
+            color: #6b7280;
+            font-size: 0.875rem; /* Base font size for the footer */
+        }
+
+        .footer a {
+            color: #6b7280; /* Default link color */
+            text-decoration: none;
+            margin: 0 8px; /* Adjust margin between links */
+        }
+
+        .footer a:hover {
+            text-decoration: underline; /* Underline on hover */
+        }
+
+        .footer small {
+            font-size: 0.75rem; /* Smaller font size for additional text */
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-white">
+        <h2 class="font-semibold text-xl">Subscription Status Update</h2>
+        <p>Hello <span class="font-semibold">{{ user.name }}</span>,</p>
+        <p>
+            {% if subscription.end_date <= now %}
+                Your subscription for <strong class="text-red-600">{{ subscription.plan.name }}</strong> has expired.
+            {% else %}
+                Your subscription for <strong class="text-green-600">{{ subscription.plan.name }}</strong> is active.
+            {% endif %}
+        </p>
+        <p>Thank you for using our service.</p>
+    </div>
+
+    <!-- Footer section -->
+    <div class="footer">
+        <p>&copy; 2024 Pesa API. All rights reserved.</p>
+        <small>
+            <a href="#" target="_blank">Terms of Service</a>
+            <a href="#" target="_blank">Privacy Policy</a>
+            <a href="#" target="_blank">Contact Us</a>
+        </small>
+    </div>
+</body>
+</html>

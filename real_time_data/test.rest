@@ -1,0 +1,245 @@
+# Create a new market
+POST http://localhost:8000/api/v1/markets/
+Content-Type: application/json
+
+{
+  "name": "Stock Market",
+  "symbol": "STK",
+  "description": "A market for stocks",
+  "country": "USA",
+  "timezone": "UTC-5"
+}
+
+###
+
+# Get all markets
+GET http://localhost:8000/api/v1/markets/
+
+###
+
+# Get a specific market by ID (replace 1 with an actual ID)
+GET http://localhost:8000/api/v1/markets/1/
+
+###
+
+# Update a market by ID (replace 1 with an actual ID)
+PUT http://localhost:8000/api/v1/markets/1/
+Content-Type: application/json
+
+{
+  "name": "Updated Stock Market",
+  "symbol": "USTK",
+  "description": "An updated market for stocks",
+  "country": "USA",
+  "timezone": "UTC-6"
+}
+
+###
+
+# Delete a market by ID (replace 1 with an actual ID)
+DELETE http://localhost:8000/api/v1/markets/1/
+
+###
+
+# Create a new asset type
+POST http://localhost:8000/api/v1/asset_types/
+Content-Type: application/json
+
+{
+  "name": "Stock",
+  "description": "Represents shares of ownership in a corporation"
+}
+
+###
+
+# Get all asset types
+GET http://localhost:8000/api/v1/asset_types/
+
+###
+
+# Get a specific asset type by ID (replace 1 with an actual ID)
+GET http://localhost:8000/api/v1/asset_types/1/
+
+###
+
+# Update an asset type by ID (replace 1 with an actual ID)
+PUT http://localhost:8000/api/v1/asset_types/1/
+Content-Type: application/json
+
+{
+  "name": "Equity",
+  "description": "Represents ownership in a corporation"
+}
+
+###
+
+# Delete an asset type by ID (replace 1 with an actual ID)
+DELETE http://localhost:8000/api/v1/asset_types/1/
+
+###
+
+# Create a new asset
+POST http://localhost:8000/api/v1/assets/
+Content-Type: application/json
+
+{
+  "market": 1,  
+  "asset_type": 1, 
+  "symbol": "AAPL",
+  "name": "Apple Inc.",
+  "description": "Technology company",
+  "currency": "USD"
+}
+
+###
+
+# Get all assets
+GET http://localhost:8000/api/v1/assets/
+
+###
+
+# Get a specific asset by ID (replace 1 with an actual ID)
+GET http://localhost:8000/api/v1/assets/1/
+
+###
+
+# Update an asset by ID (replace 1 with an actual ID)
+PUT http://localhost:8000/api/v1/assets/1/
+Content-Type: application/json
+
+{
+  "market": 1,  # Replace with an existing market ID
+  "asset_type": 1,  # Replace with an existing asset type ID
+  "symbol": "AAPL",
+  "name": "Apple Inc. Updated",
+  "description": "Updated technology company",
+  "currency": "USD"
+}
+
+###
+
+# Delete an asset by ID (replace 1 with an actual ID)
+DELETE http://localhost:8000/api/v1/assets/1/
+
+###
+
+# Create a new price entry
+POST http://localhost:8000/api/v1/prices/
+Content-Type: application/json
+
+{
+  "asset": 1,  # Replace with an existing asset ID
+  "date_time": "2024-07-03T12:00:00Z",
+  "price": "1500.25",
+  "volume": 10000
+}
+
+###
+
+# Get all prices
+GET http://localhost:8000/api/v1/prices/
+
+###
+
+# Get a specific price entry by ID (replace 1 with an actual ID)
+GET http://localhost:8000/api/v1/prices/1/
+
+###
+
+# Update a price entry by ID (replace 1 with an actual ID)
+PUT http://localhost:8000/api/v1/prices/1/
+Content-Type: application/json
+
+{
+  "asset": 1,  # Replace with an existing asset ID
+  "date_time": "2024-07-03T12:00:00Z",
+  "price": "1600.75",
+  "volume": 12000
+}
+
+###
+
+# Delete a price entry by ID (replace 1 with an actual ID)
+DELETE http://localhost:8000/api/v1/prices/1/
+
+###
+
+# Create a new forex pair
+POST http://localhost:8000/api/v1/forex/
+Content-Type: application/json
+
+{
+  "base_currency": "USD",
+  "target_currency": "EUR",
+  "exchange_rate": "0.85"
+}
+
+###
+
+# Get all forex pairs
+GET http://localhost:8000/api/v1/forex/
+
+###
+
+# Get a specific forex pair by ID (replace 1 with an actual ID)
+GET http://localhost:8000/api/v1/forex/1/
+
+###
+
+# Update a forex pair by ID (replace 1 with an actual ID)
+PUT http://localhost:8000/api/v1/forex/1/
+Content-Type: application/json
+
+{
+  "base_currency": "USD",
+  "target_currency": "EUR",
+  "exchange_rate": "0.86"
+}
+
+###
+
+# Delete a forex pair by ID (replace 1 with an actual ID)
+DELETE http://localhost:8000/api/v1/forex/1/
+
+###
+
+# Create a new news article
+POST http://localhost:8000/api/v1/news/
+Content-Type: application/json
+
+{
+  "market": 1,  
+  "title": "New Stock Market News",
+  "content": "Exciting developments in the stock market.",
+  "published_at": "2024-07-03T08:00:00Z",
+  "source": "Financial Times"
+}
+
+###
+
+# Get all news articles
+GET http://localhost:8000/api/v1/news/
+
+###
+
+# Get a specific news article by ID (replace 1 with an actual ID)
+GET http://localhost:8000/api/v1/news/1/
+
+###
+
+# Update a news article by ID (replace 1 with an actual ID)
+PUT http://localhost:8000/api/v1/news/1/
+Content-Type: application/json
+
+{
+  "market": 1,  
+  "title": "Updated Stock Market News",
+  "content": "Exciting updates in the stock market.",
+  "published_at": "2024-07-03T08:00:00Z",
+  "source": "Financial Times"
+}
+
+###
+
+# Delete a news article by ID (replace 1 with an actual ID)
+DELETE http://localhost:8000/api/v1/news/1/
